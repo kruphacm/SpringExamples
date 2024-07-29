@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TODO APPLICATION</title>
+    <link rel="stylesheet" href="/assests/css/todo.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .no-bullets {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <section class="vh-100 gradient-custom">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-xl-10">
+                    <div class="card">
+                        <div class="card-body p-5">
+                            <ul class="no-bullets">
+                                <li class="alert alert-danger" role="alert" th:each="error : ${#fields.errors('todolist.*')}" th:text="${error}"></li>
+                            </ul>
+                            <form th:action="@{/saveTodo}" method="post" class="d-flex justify-content-center align-items-center mb-4" th:object="${todolist}">
+                                <input type="text" class="form-control" th:field="*{content}" placeholder="New task..." />
+                                <button type="submit" class="btn btn-info ms-2">Add</button>
+                            </form>
+
+                            <!-- Tabs navs -->
+                            <ul class="nav nav-tabs mb-4 pb-2">
+							    <li class="nav-item" role="presentation">
+							        <a class="nav-link" th:href="@{/all}" data-mdb-tab-init role="tab"
+							           th:class="${allTabActive == null || allTabActive ? 'nav-link active' : 'nav-link'}" 
+							           aria-selected="${allTabActive != null && allTabActive}">All</a>
+							    </li>
+							    <li class="nav-item" role="presentation">
+							        <a class="nav-link" th:href="@{/active}" data-mdb-tab-init role="tab"
+							           th:class="${OpenTabActive == null || OpenTabActive ? 'nav-link active' : 'nav-link'}" 
+							           aria-selected="${OpenTabActive != null && OpenTabActive}">Active</a>
+							    </li>
+							    <li class="nav-item" role="presentation">
+							        <a class="nav-link" th:href="@{/completed}" data-mdb-tab-init role="tab"
+							           th:class="${CloseTabActive == null || CloseTabActive ? 'nav-link active' : 'nav-link'}" 
+							           aria-selected="${CloseTabActive != null && CloseTabActive}">Completed</a>
+							    </li>
+							</ul>
+
+
+
+                            <!-- Tabs navs -->
+
+                            <!-- Tabs content -->
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tabs-1" role="tabpanel">
+							    <ul class="list-group mb-0" th:each="task : ${list}">
+							        <li class="list-group-item d-flex align-items-center border-0 mb-2 rounded" style="background-color: #f4f6f7;">
+							            <span th:if="${task.status == 'close'}" style="text-decoration: line-through;" th:text="${task.content}"></span>
+							            <span th:unless="${task.status == 'close'}" th:text="${task.content}"></span>
+							            <div class="ml-auto">
+							                <form th:action="@{'/closeTodo/' + ${task.id}}" method="post">
+							                    <button type="submit" class="btn btn-danger" th:disabled="${task.status == 'close'}">Close</button>
+							                </form>
+							            </div>
+							        </li> 
+							    </ul>
+							</div>
+                                
+                                <div class="tab-pane fade" id="tabs-2" role="tabpanel">
+                                    <ul class="list-group mb-0" th:each="task : ${listOpen}">
+                                        <li class="list-group-item d-flex align-items-center border-0 mb-2 rounded" style="background-color: #f4f6f7;">
+                                            <span th:text="${task.content}"></span>
+                                            <div class="ml-auto">
+							                <form th:action="@{'/closeTodo/' + ${task.id}}" method="post">
+							                    <button type="submit" class="btn btn-danger"  th:disabled="${task.status == 'close'}">Close</button>
+							                </form>
+							            </div>
+                                        </li> 
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="tabs-3" role="tabpanel">
+                                    <ul class="list-group mb-0" th:each="task : ${listClose}">
+                                        <li class="list-group-item d-flex align-items-center border-0 mb-2 rounded" style="background-color: #f4f6f7;">
+                                            <span th:text="${task.content}"></span>
+                                        </li> 
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Tabs content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
